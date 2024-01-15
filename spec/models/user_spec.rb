@@ -28,9 +28,6 @@ RSpec.describe User, type: :model do
   it "is not valid with a username that is too long" do
     expect(FactoryBot.build(:user, username: Faker::Alphanumeric.alphanumeric(number: 31))).to_not be_valid
   end
-  it "is not valid with a password that is too short" do
-    expect(FactoryBot.build(:user, password: Faker::Alphanumeric.alphanumeric(number: 7))).to_not be_valid
-  end
   it "is valid with a username that at the maximum length" do
     expect(FactoryBot.build(:user, username: Faker::Alphanumeric.alphanumeric(number: 30))).to be_valid
   end
@@ -38,10 +35,22 @@ RSpec.describe User, type: :model do
     expect(FactoryBot.build(:user, username: Faker::Alphanumeric.alphanumeric(number: 1))).to be_valid
   end
   it "is not valid with a password that is too short" do
-    expect(FactoryBot.build(:user, password: Faker::Alphanumeric.alphanumeric(number: 7))).to_not be_valid
+    expect(FactoryBot.build(:user, password: Faker::Internet.password(min_length: 7, max_length: 7, mix_case: true))).to_not be_valid
   end
   it "is valid with a password that at the minimum length" do
-    expect(FactoryBot.build(:user, password: Faker::Alphanumeric.alphanumeric(number: 8))).to be_valid
+    expect(FactoryBot.build(:user, password: Faker::Internet.password(min_length: 8, max_length: 8, mix_case: true))).to be_valid
+  end
+  it "is not valid with a password not containing an uppercase letter" do
+    expect(FactoryBot.build(:user, password: "nouppercasel3tters")).to_not be_valid
+  end
+  it "is not valid with a password not containing a lowercase letter" do
+    expect(FactoryBot.build(:user, password: "NOLOWERCASEL3TTERS")).to_not be_valid
+  end
+  it "is not valid with a password not containing a digit" do
+    expect(FactoryBot.build(:user, password: "NoDigitsPassword")).to_not be_valid
+  end
+  it "is valid with a valid password" do
+    expect(FactoryBot.build(:user, password: "ValidPassword123")).to be_valid
   end
   it "is not valid with a non-unique username" do
     user = FactoryBot.create(:user)
@@ -60,4 +69,5 @@ RSpec.describe User, type: :model do
     decoded_token = JWT.decode(token, Rails.application.secret_key_base)
     expect(decoded_token[0]['user_id']).to eq(user.id)
   end
+
 end
