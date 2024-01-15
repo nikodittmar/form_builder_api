@@ -54,4 +54,10 @@ RSpec.describe User, type: :model do
   it "is not valid with a not valid email" do
     expect(FactoryBot.build(:user, email: "not an email")).to_not be_valid
   end
+  it "returns a token with the correct id" do
+    user = FactoryBot.create(:user)
+    token = user.token
+    decoded_token = JWT.decode(token, Rails.application.secret_key_base)
+    expect(decoded_token[0]['user_id']).to eq(user.id)
+  end
 end

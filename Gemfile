@@ -39,8 +39,6 @@ gem 'jwt', '~> 2.7', '>= 2.7.1'
 
 gem 'email_validator', '~> 2.2', '>= 2.2.4'
 
-gem 'database_cleaner', '~> 2.0', '>= 2.0.2'
-
 group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
   gem "debug", platforms: %i[ mri mswin mswin64 mingw x64_mingw ]
@@ -54,6 +52,8 @@ group :test do
   gem 'factory_bot_rails', '~> 6.4', '>= 6.4.3'
 
   gem 'faker', '~> 3.2', '>= 3.2.3'
+
+  gem 'database_cleaner-active_record'
 
 end
 
