@@ -2,7 +2,12 @@ class Api::V1::AuthenticationController < ApplicationController
     before_action :authenticate_request, only: :refresh_token
 
     def login
-        @user = params.has_key?(:email) ? User.find_by_email(params[:email]) : User.find_by_username(params[:username])
+        @user = User.find_by_email(params[:identifier])
+
+        unless @user
+            @user = User.find_by_username(params[:identifier])
+        end
+        
         unless @user
             head :not_found and return
         end
