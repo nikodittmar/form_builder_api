@@ -6,7 +6,7 @@ RSpec.describe "Authentications", type: :request do
     
     context 'with the username' do
       before do
-        post '/api/v1/auth/login', params: { username: my_user.username, password: my_user.password }
+        post '/api/v1/auth/login', params: { identifier: my_user.username, password: my_user.password }
       end
   
       it 'returns the email' do
@@ -32,7 +32,7 @@ RSpec.describe "Authentications", type: :request do
 
     context 'with the email' do 
       before do
-        post '/api/v1/auth/login', params: { email: my_user.email, password: my_user.password }
+        post '/api/v1/auth/login', params: { identifier: my_user.email, password: my_user.password }
       end
   
       it 'returns the email' do
@@ -56,32 +56,6 @@ RSpec.describe "Authentications", type: :request do
       end
     end
     
-    context 'with both the email and username' do
-      before do
-        post '/api/v1/auth/login', params: { email: my_user.email, username: my_user.username, password: my_user.password }
-      end
-  
-      it 'returns the email' do
-        expect(JSON.parse(response.body)['email']).to eq(my_user.email)
-      end
-  
-      it 'returns the username' do
-        expect(JSON.parse(response.body)['username']).to eq(my_user.username)
-      end
-  
-      it 'returns the id' do
-        expect(JSON.parse(response.body)['id']).to eq(my_user.id)
-      end
-  
-      it 'returns a token' do
-        expect(JSON.parse(response.body)).to have_key('token')
-      end
-  
-      it 'returns http ok status' do
-        expect(response).to have_http_status(:ok)
-      end
-    end
-
     context 'without a username or email' do
       before do
         post '/api/v1/auth/login', params: { password: my_user.password }
@@ -94,7 +68,7 @@ RSpec.describe "Authentications", type: :request do
 
     context 'with the wrong password' do
       before do
-        post '/api/v1/auth/login', params: { email: my_user.email, username: my_user.username, password: "" }
+        post '/api/v1/auth/login', params: { identifier: my_user.email, password: "" }
       end
 
       it 'returns http unauthorized status' do
