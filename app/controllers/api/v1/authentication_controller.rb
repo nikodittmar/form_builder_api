@@ -1,5 +1,5 @@
 class Api::V1::AuthenticationController < ApplicationController
-    before_action :authenticate_request, only: :refresh_token
+    before_action :authenticate_request, only: [:refresh_token, :account]
 
     def login
         @user = User.find_by_email(params[:identifier])
@@ -21,5 +21,9 @@ class Api::V1::AuthenticationController < ApplicationController
 
     def refresh_token
         render json: { token: @user.token }
+    end
+
+    def account
+        render json: @user.to_json(:except => :password_digest)
     end
 end

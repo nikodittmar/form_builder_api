@@ -6,6 +6,7 @@ Rails.application.routes.draw do
       resources :users
       post '/auth/login', to: 'authentication#login'
       get '/auth/refresh-token', to: 'authentication#refresh_token'
+      get '/auth/account', to: 'authentication#account'
     end
   end
 
