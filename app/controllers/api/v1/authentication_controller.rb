@@ -9,7 +9,7 @@ class Api::V1::AuthenticationController < ApplicationController
         end
         
         unless @user
-            head :not_found and return
+            head :unauthorized and return
         end
 
         if @user.authenticate(params[:password])
