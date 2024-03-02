@@ -4,4 +4,9 @@ FactoryBot.define do
         email { Faker::Internet.unique.email }
         password { Faker::Internet.password(mix_case: true) }
     end
+
+    factory :form do
+        user
+        name { Faker::Lorem.word }
+    end
 end

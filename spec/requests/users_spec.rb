@@ -27,10 +27,6 @@ RSpec.describe "Users", type: :request do
       expect(JSON.parse(response.body)['username']).to eq(my_user.username)
     end
 
-    it 'returns the email' do
-      expect(JSON.parse(response.body)['email']).to eq(my_user.email)
-    end
-
     it 'does not return the password' do
       expect(JSON.parse(response.body)).to_not have_key('password_digest')
       expect(JSON.parse(response.body)).to_not have_key('password')

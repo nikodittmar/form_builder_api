@@ -69,5 +69,10 @@ RSpec.describe User, type: :model do
     decoded_token = JWT.decode(token, Rails.application.secret_key_base)
     expect(decoded_token[0]['user_id']).to eq(user.id)
   end
-
+  it "destroys all accociated forms" do
+    user = FactoryBot.create(:user)
+    form = FactoryBot.create(:form, user: user)
+    user.destroy
+    expect { Form.find(form.id) }.to raise_error(ActiveRecord::RecordNotFound)
+  end
 end

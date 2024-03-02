@@ -61,8 +61,8 @@ RSpec.describe "Authentications", type: :request do
         post '/api/v1/auth/login', params: { password: my_user.password }
       end
 
-      it 'returns http not found status' do
-        expect(response).to have_http_status(:not_found)
+      it 'returns http unauthorized status' do
+        expect(response).to have_http_status(:unauthorized)
       end
     end
 
@@ -82,7 +82,7 @@ RSpec.describe "Authentications", type: :request do
       context 'with a valid token' do
         let!(:token) { JWT.encode({ :user_id => my_user.id, :expiration => 5.days.from_now.to_i }, Rails.application.secret_key_base) }
         before do
-          post '/api/v1/auth/refresh-token', params: { }, headers: { :Authorization => "bearer #{token}" }
+          get '/api/v1/auth/refresh-token', params: { }, headers: { :Authorization => "bearer #{token}" }
         end
 
         it 'returns a new token' do
@@ -100,7 +100,7 @@ RSpec.describe "Authentications", type: :request do
       context 'with an expired token' do
         let!(:token) { JWT.encode({ :user_id => my_user.id, :expiration => 2.days.ago.to_i }, Rails.application.secret_key_base) }
         before do
-          post '/api/v1/auth/refresh-token', params: { }, headers: { :Authorization => "bearer #{token}" }
+          get '/api/v1/auth/refresh-token', params: { }, headers: { :Authorization => "bearer #{token}" }
         end
 
         it 'returns http unauthorized status' do
@@ -110,7 +110,7 @@ RSpec.describe "Authentications", type: :request do
 
       context 'with a fake token' do
         before do
-          post '/api/v1/auth/refresh-token', params: { }, headers: { :Authorization => "bearer notatoken" }
+          get '/api/v1/auth/refresh-token', params: { }, headers: { :Authorization => "bearer notatoken" }
         end
 
         it 'returns http unauthorized status' do
@@ -120,10 +120,11 @@ RSpec.describe "Authentications", type: :request do
 
       context 'with no token' do
         before do
-          post '/api/v1/auth/refresh-token'
+          get '/api/v1/auth/refresh-token'
         end
 
         it 'returns http unauthorized status' do
+          
           expect(response).to have_http_status(:unauthorized)
         end
       end

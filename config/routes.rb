@@ -4,6 +4,7 @@ Rails.application.routes.draw do
   namespace :api do
     namespace :v1 do
       resources :users
+      resources :forms
       post '/auth/login', to: 'authentication#login'
       get '/auth/refresh-token', to: 'authentication#refresh_token'
       get '/auth/account', to: 'authentication#account'
