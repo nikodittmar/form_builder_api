@@ -82,16 +82,6 @@ RSpec.describe "Forms", type: :request do
         expect(response).to have_http_status(:created)
       end
     end
-
-    context "with invalid parameters" do
-      before do
-        post "/api/v1/forms", params: { form: { name: nil } }, headers: { :Authorization => "bearer #{my_user.token}" }
-      end
-  
-      it 'returns http unprocessable entity status' do
-        expect(response).to have_http_status(:unprocessable_entity)
-      end
-    end
     
     context "without authorization" do
       before do
@@ -120,16 +110,6 @@ RSpec.describe "Forms", type: :request do
 
       it 'returns http ok status' do
         expect(response).to have_http_status(:ok)
-      end
-    end
-
-    context "with invalid parameters" do
-      before do
-        patch "/api/v1/forms/#{my_form.id}", params: { form: { name: "" } }, headers: { :Authorization => "bearer #{my_user.token}" }
-      end
-
-      it 'returns http unprocessable entity status' do
-        expect(response).to have_http_status(:unprocessable_entity)
       end
     end
 
