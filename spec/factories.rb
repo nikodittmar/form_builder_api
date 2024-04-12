@@ -1,3 +1,5 @@
+require 'examples.rb'
+
 FactoryBot.define do
     factory :user do
         username { Faker::Internet.unique.username }
@@ -8,5 +10,6 @@ FactoryBot.define do
     factory :form do
         user
         name { Faker::Lorem.word }
+        components { VALID_COMPONENTS }
     end
 end

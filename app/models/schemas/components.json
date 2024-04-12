@@ -1,0 +1,214 @@
+{
+    "type": "array",
+    "items": {
+        "oneOf": [
+            {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "string"
+                    },
+                    "type": {
+                        "const": "text-field"
+                    },
+                    "name": {
+                        "type": "string"
+                    },
+                    "required": {
+                        "type": "boolean"
+                    },
+                    "helper": {
+                        "type": "string"
+                    },
+                    "placeholder": {
+                        "type": "string"
+                    }
+                },
+                "required": [ "id", "type", "name", "required", "helper", "placeholder" ],
+                "additionalProperties": false
+            },
+            {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "string"
+                    },
+                    "type": {
+                        "const": "text-area"
+                    },
+                    "name": {
+                        "type": "string"
+                    },
+                    "required": {
+                        "type": "boolean"
+                    },
+                    "helper": {
+                        "type": "string"
+                    },
+                    "placeholder": {
+                        "type": "string"
+                    }
+                },
+                "required": [ "id", "type", "name", "required", "helper", "placeholder" ],
+                "additionalProperties": false
+            },
+            {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "string"
+                    },
+                    "type": {
+                        "const": "email-address"
+                    },
+                    "name": {
+                        "type": "string"
+                    },
+                    "required": {
+                        "type": "boolean"
+                    },
+                    "helper": {
+                        "type": "string"
+                    },
+                    "placeholder": {
+                        "type": "string"
+                    }
+                },
+                "required": [ "id", "type", "name", "required", "helper", "placeholder" ],
+                "additionalProperties": false
+            },
+            {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "string"
+                    },
+                    "type": {
+                        "const": "phone-number"
+                    },
+                    "name": {
+                        "type": "string"
+                    },
+                    "required": {
+                        "type": "boolean"
+                    },
+                    "helper": {
+                        "type": "string"
+                    },
+                    "placeholder": {
+                        "type": "string"
+                    }
+                },
+                "required": [ "id", "type", "name", "required", "helper", "placeholder" ],
+                "additionalProperties": false
+            },
+            {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "string"
+                    },
+                    "type": {
+                        "const": "number-picker"
+                    },
+                    "name": {
+                        "type": "string"
+                    },
+                    "required": {
+                        "type": "boolean"
+                    },
+                    "helper": {
+                        "type": "string"
+                    },
+                    "placeholder": {
+                        "type": "string"
+                    }, 
+                    "min-value": {
+                        "type": "number"
+                    }, 
+                    "max-value": {
+                        "type": "number"
+                    }
+                },
+                "required": [ "id", "type", "name", "required", "helper", "placeholder" ],
+                "additionalProperties": false
+            },
+            {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "string"
+                    },
+                    "type": {
+                        "const": "checkboxes"
+                    },
+                    "name": {
+                        "type": "string"
+                    },
+                    "required": {
+                        "type": "boolean"
+                    },
+                    "helper": {
+                        "type": "string"
+                    },
+                    "choices": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "properties": {
+                                "id": {
+                                    "type": "string"
+                                },
+                                "name": {
+                                    "type": "string"
+                                }
+                            },
+                            "required": [ "id", "name" ],
+                            "additionalProperties": false
+                        }
+                    }
+                },
+                "required": [ "id", "type", "name", "required", "helper" ],
+                "additionalProperties": false
+            },
+            {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "string"
+                    },
+                    "type": {
+                        "const": "radio-buttons"
+                    },
+                    "name": {
+                        "type": "string"
+                    },
+                    "required": {
+                        "type": "boolean"
+                    },
+                    "helper": {
+                        "type": "string"
+                    },
+                    "choices": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "properties": {
+                                "id": {
+                                    "type": "string"
+                                },
+                                "name": {
+                                    "type": "string"
+                                }
+                            },
+                            "required": [ "id", "name" ],
+                            "additionalProperties": false
+                        }
+                    }
+                },
+                "required": [ "id", "type", "name", "required", "helper" ],
+                "additionalProperties": false
+            }
+        ]
+    }
+}

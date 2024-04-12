@@ -40,6 +40,6 @@ class Api::V1::FormsController < ApplicationController
 
     private
     def form_params
-        params.require(:form).permit(:name)
+        params.require(:form).permit(:name, components: [ :id, :name, :required, :helper, :placeholder, :type, choices: [ :id, :name ] ])
     end
 end

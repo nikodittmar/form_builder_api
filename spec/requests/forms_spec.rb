@@ -1,4 +1,5 @@
 require 'rails_helper'
+require 'examples.rb'
 
 RSpec.describe "Forms", type: :request do
   describe "GET /index" do
@@ -7,7 +8,7 @@ RSpec.describe "Forms", type: :request do
     context "with authorization" do
       before do
         FactoryBot.create_list(:form, 10, user: my_user)
-        get '/api/v1/forms', headers: { :Authorization => "bearer #{my_user.token}" }
+        get '/api/v1/forms', headers: { :Authorization => "bearer #{my_user.token}" }, as: :json
       end
 
       it 'returns all the forms' do
@@ -35,13 +36,17 @@ RSpec.describe "Forms", type: :request do
     let!(:my_user) { FactoryBot.create(:user) }
     let!(:my_form) { FactoryBot.create(:form, user: my_user) }
 
-    context "with valid parameters" do
+    context "with authorization" do
       before do
-        get "/api/v1/forms/#{my_form.id}", headers: { :Authorization => "bearer #{my_user.token}" }
+        get "/api/v1/forms/#{my_form.id}", headers: { :Authorization => "bearer #{my_user.token}" }, as: :json
       end
   
       it 'returns the name' do
         expect(JSON.parse(response.body)['name']).to eq(my_form.name)
+      end
+
+      it 'returns the components' do
+        expect(JSON.parse(response.body)['components']).to eq(my_form.components)
       end
   
       it 'returns http ok status' do
@@ -66,11 +71,15 @@ RSpec.describe "Forms", type: :request do
 
     context "with valid parameters" do
       before do
-        post "/api/v1/forms", params: { form: { name: my_form.name } }, headers: { :Authorization => "bearer #{my_user.token}" }
+        post "/api/v1/forms", params: { form: { name: my_form.name, components: my_form.components } }, headers: { :Authorization => "bearer #{my_user.token}" }, as: :json
       end
   
       it 'returns the name' do
         expect(JSON.parse(response.body)['name']).to eq(my_form.name)
+      end
+
+      it 'returns the components' do
+        expect(JSON.parse(response.body)['components']).to eq(my_form.components)
       end
   
       it 'is accociated with the user' do
@@ -82,10 +91,20 @@ RSpec.describe "Forms", type: :request do
         expect(response).to have_http_status(:created)
       end
     end
+
+    context "with invalid parameters" do
+      before do
+        post "/api/v1/forms", params: { form: { name: my_form.name, components: INVALID_COMPONENTS } }, headers: { :Authorization => "bearer #{my_user.token}" }, as: :json
+      end
+  
+      it 'returns http unprocessable entity status' do
+        expect(response).to have_http_status(:unprocessable_entity)
+      end
+    end
     
     context "without authorization" do
       before do
-        post "/api/v1/forms", params: { form: { name: my_form.name } }
+        post "/api/v1/forms", params: { form: { name: my_form.name } }, as: :json
       end
   
       it 'returns http unauthorized status' do
@@ -97,15 +116,19 @@ RSpec.describe "Forms", type: :request do
   describe "PATCH /update" do
     let!(:my_user) { FactoryBot.create(:user) }
     let!(:my_form) { FactoryBot.create(:form, user: my_user) }
-    let!(:new_form) { FactoryBot.build(:form, user: my_user) }
+    let!(:new_form) { FactoryBot.build(:form, user: my_user, components: VALID_COMPONENTS_ALTERNATE) }
 
     context "with valid parameters" do
       before do
-        patch "/api/v1/forms/#{my_form.id}", params: { form: { name: new_form.name } }, headers: { :Authorization => "bearer #{my_user.token}" }
+        patch "/api/v1/forms/#{my_form.id}", params: { form: { name: new_form.name, components: new_form.components } }, headers: { :Authorization => "bearer #{my_user.token}" }, as: :json
       end
 
       it 'returns the name' do
         expect(JSON.parse(response.body)['name']).to eq(new_form.name)
+      end
+
+      it 'returns the components' do
+        expect(JSON.parse(response.body)['components']).to eq(new_form.components)
       end
 
       it 'returns http ok status' do
@@ -113,9 +136,19 @@ RSpec.describe "Forms", type: :request do
       end
     end
 
+    context "with invalid parameters" do
+      before do
+        patch "/api/v1/forms/#{my_form.id}", params: { form: { name: new_form.name, components: INVALID_COMPONENTS } }, headers: { :Authorization => "bearer #{my_user.token}" }, as: :json
+      end
+  
+      it 'returns http unprocessable entity status' do
+        expect(response).to have_http_status(:unprocessable_entity)
+      end
+    end
+
     context "without authorization" do
       before do
-        patch "/api/v1/forms/#{my_form.id}", params: { form: { name: new_form.name } }
+        patch "/api/v1/forms/#{my_form.id}", params: { form: { name: new_form.name } }, as: :json
       end
 
       it 'returns http unauthorized status' do
@@ -152,5 +185,4 @@ RSpec.describe "Forms", type: :request do
       end
     end
   end
-
 end
