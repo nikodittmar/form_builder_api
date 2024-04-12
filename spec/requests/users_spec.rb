@@ -39,30 +39,42 @@ RSpec.describe "Users", type: :request do
 
   describe "POST /create" do
     let!(:my_user) { FactoryBot.build(:user) }
-    
-    before do
-      post "/api/v1/users", params: { user: { username: my_user.username, email: my_user.email, password: my_user.password } }
+
+    context "with invalid parameters" do
+      before do
+        post "/api/v1/users", params: { user: { username: my_user.username, email: my_user.email, password: my_user.password } }, as: :json
+      end
+
+      it 'returns the username' do
+        expect(JSON.parse(response.body)['username']).to eq(my_user.username)
+      end
+
+      it 'returns the email' do
+        expect(JSON.parse(response.body)['email']).to eq(my_user.email)
+      end
+
+      it 'returns a token' do
+        expect(JSON.parse(response.body)).to have_key('token')
+      end
+
+      it 'does not return the password' do
+        expect(JSON.parse(response.body)).to_not have_key('password_digest')
+        expect(JSON.parse(response.body)).to_not have_key('password')
+      end
+
+      it 'returns http created status' do
+        expect(response).to have_http_status(:created)
+      end
     end
 
-    it 'returns the username' do
-      expect(JSON.parse(response.body)['username']).to eq(my_user.username)
-    end
+    context "with invalid parameters" do
+      before do
+        post "/api/v1/users", params: { user: { username: "", email: "not a email", password: "invalid" } }, as: :json
+      end
 
-    it 'returns the email' do
-      expect(JSON.parse(response.body)['email']).to eq(my_user.email)
-    end
-
-    it 'returns a token' do
-      expect(JSON.parse(response.body)).to have_key('token')
-    end
-
-    it 'does not return the password' do
-      expect(JSON.parse(response.body)).to_not have_key('password_digest')
-      expect(JSON.parse(response.body)).to_not have_key('password')
-    end
-
-    it 'returns http created status' do
-      expect(response).to have_http_status(:created)
+      it 'returns http unprocessable entity status' do
+        expect(response).to have_http_status(:unprocessable_entity)
+      end
     end
   end
 
@@ -72,7 +84,7 @@ RSpec.describe "Users", type: :request do
     
     context "with the correct password" do
       before do
-        patch "/api/v1/users/#{my_user.id}", params: { user: { username: new_user.username, email: new_user.email, password: new_user.password }, password_challenge: my_user.password }
+        patch "/api/v1/users/#{my_user.id}", params: { user: { username: new_user.username, email: new_user.email, password: new_user.password }, password_challenge: my_user.password }, as: :json
       end
   
       it 'returns the username' do
@@ -97,9 +109,19 @@ RSpec.describe "Users", type: :request do
       end
     end
 
+    context "with invalid parameters" do
+      before do
+        patch "/api/v1/users/#{my_user.id}", params: { user: { username: "", email: "not a email", password: "invalid" }, password_challenge: my_user.password }, as: :json
+      end
+
+      it 'returns http unprocessable entity status' do
+        expect(response).to have_http_status(:unprocessable_entity)
+      end
+    end
+
     context "with the wrong password" do
       before do
-        patch "/api/v1/users/#{my_user.id}", params: { user: { username: new_user.username, email: new_user.email, password: new_user.password }, password_challenge: new_user.password }
+        patch "/api/v1/users/#{my_user.id}", params: { user: { username: new_user.username, email: new_user.email, password: new_user.password }, password_challenge: new_user.password }, as: :json
       end
   
       it 'returns http unauthorized status' do

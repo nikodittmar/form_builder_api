@@ -45,6 +45,14 @@ RSpec.describe "Forms", type: :request do
         expect(JSON.parse(response.body)['name']).to eq(my_form.name)
       end
 
+      it 'returns the title' do
+        expect(JSON.parse(response.body)['title']).to eq(my_form.title)
+      end
+
+      it 'returns the description' do
+        expect(JSON.parse(response.body)['description']).to eq(my_form.description)
+      end
+
       it 'returns the components' do
         expect(JSON.parse(response.body)['components']).to eq(my_form.components)
       end
@@ -71,11 +79,19 @@ RSpec.describe "Forms", type: :request do
 
     context "with valid parameters" do
       before do
-        post "/api/v1/forms", params: { form: { name: my_form.name, components: my_form.components } }, headers: { :Authorization => "bearer #{my_user.token}" }, as: :json
+        post "/api/v1/forms", params: { form: { name: my_form.name, title: my_form.title, description: my_form.description, components: my_form.components } }, headers: { :Authorization => "bearer #{my_user.token}" }, as: :json
       end
   
       it 'returns the name' do
         expect(JSON.parse(response.body)['name']).to eq(my_form.name)
+      end
+
+      it 'returns the title' do
+        expect(JSON.parse(response.body)['title']).to eq(my_form.title)
+      end
+
+      it 'returns the description' do
+        expect(JSON.parse(response.body)['description']).to eq(my_form.description)
       end
 
       it 'returns the components' do
@@ -94,7 +110,7 @@ RSpec.describe "Forms", type: :request do
 
     context "with invalid parameters" do
       before do
-        post "/api/v1/forms", params: { form: { name: my_form.name, components: INVALID_COMPONENTS } }, headers: { :Authorization => "bearer #{my_user.token}" }, as: :json
+        post "/api/v1/forms", params: { form: { name: my_form.name, title: my_form.title, description: my_form.description, components: INVALID_COMPONENTS } }, headers: { :Authorization => "bearer #{my_user.token}" }, as: :json
       end
   
       it 'returns http unprocessable entity status' do
@@ -120,11 +136,19 @@ RSpec.describe "Forms", type: :request do
 
     context "with valid parameters" do
       before do
-        patch "/api/v1/forms/#{my_form.id}", params: { form: { name: new_form.name, components: new_form.components } }, headers: { :Authorization => "bearer #{my_user.token}" }, as: :json
+        patch "/api/v1/forms/#{my_form.id}", params: { form: { name: new_form.name, title: new_form.title, description: new_form.description, components: new_form.components } }, headers: { :Authorization => "bearer #{my_user.token}" }, as: :json
       end
 
       it 'returns the name' do
         expect(JSON.parse(response.body)['name']).to eq(new_form.name)
+      end
+
+      it 'returns the title' do
+        expect(JSON.parse(response.body)['title']).to eq(new_form.title)
+      end
+
+      it 'returns the description' do
+        expect(JSON.parse(response.body)['description']).to eq(new_form.description)
       end
 
       it 'returns the components' do
@@ -138,7 +162,7 @@ RSpec.describe "Forms", type: :request do
 
     context "with invalid parameters" do
       before do
-        patch "/api/v1/forms/#{my_form.id}", params: { form: { name: new_form.name, components: INVALID_COMPONENTS } }, headers: { :Authorization => "bearer #{my_user.token}" }, as: :json
+        patch "/api/v1/forms/#{my_form.id}", params: { form: { name: new_form.name, title: new_form.title, description: new_form.description, components: INVALID_COMPONENTS } }, headers: { :Authorization => "bearer #{my_user.token}" }, as: :json
       end
   
       it 'returns http unprocessable entity status' do

@@ -123,10 +123,10 @@
                     "placeholder": {
                         "type": "string"
                     }, 
-                    "min-value": {
+                    "min_value": {
                         "type": "number"
                     }, 
-                    "max-value": {
+                    "max_value": {
                         "type": "number"
                     }
                 },

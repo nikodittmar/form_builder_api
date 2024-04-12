@@ -9,7 +9,9 @@ FactoryBot.define do
 
     factory :form do
         user
-        name { Faker::Lorem.word }
+        name { Faker::Lorem.sentence }
+        title { Faker::Lorem.sentence }
+        description { Faker::Lorem.paragraph }
         components { VALID_COMPONENTS }
     end
 end
