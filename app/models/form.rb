@@ -1,4 +1,6 @@
 class Form < ApplicationRecord
+    attribute :published, :boolean, default: false
+
     belongs_to :user
 
     validate :components_are_valid

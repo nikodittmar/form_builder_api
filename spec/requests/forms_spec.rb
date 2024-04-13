@@ -15,6 +15,10 @@ RSpec.describe "Forms", type: :request do
         expect(JSON.parse(response.body).size).to eq(10)
       end
 
+      it 'does not return the form components' do
+        expect(JSON.parse(response.body)[0]['components']).to eq(nil)
+      end
+
       it 'returns http ok status' do
         expect(response).to have_http_status(:ok)
       end
@@ -35,10 +39,11 @@ RSpec.describe "Forms", type: :request do
   describe "GET /show" do
     let!(:my_user) { FactoryBot.create(:user) }
     let!(:my_form) { FactoryBot.create(:form, user: my_user) }
+    let!(:my_published_form) { FactoryBot.create(:form, user: my_user, published: true) }
 
     context "with authorization" do
       before do
-        get "/api/v1/forms/#{my_form.id}", headers: { :Authorization => "bearer #{my_user.token}" }, as: :json
+        get "/api/v1/forms/#{my_form.id}", headers: { :Authorization => "bearer #{my_user.token}" }
       end
   
       it 'returns the name' do
@@ -62,7 +67,33 @@ RSpec.describe "Forms", type: :request do
       end
     end
 
-    context "without authorization" do
+    context "without authorization as published" do
+      before do
+        get "/api/v1/forms/#{my_published_form.id}"
+      end
+
+      it 'returns the name' do
+        expect(JSON.parse(response.body)['name']).to eq(my_published_form.name)
+      end
+
+      it 'returns the title' do
+        expect(JSON.parse(response.body)['title']).to eq(my_published_form.title)
+      end
+
+      it 'returns the description' do
+        expect(JSON.parse(response.body)['description']).to eq(my_published_form.description)
+      end
+
+      it 'returns the components' do
+        expect(JSON.parse(response.body)['components']).to eq(my_published_form.components)
+      end
+
+      it 'returns http ok status' do
+        expect(response).to have_http_status(:ok)
+      end
+    end
+
+    context "without authorization as unpublished" do
       before do
         get "/api/v1/forms/#{my_form.id}"
       end
@@ -96,6 +127,10 @@ RSpec.describe "Forms", type: :request do
 
       it 'returns the components' do
         expect(JSON.parse(response.body)['components']).to eq(my_form.components)
+      end
+
+      it 'returns the default published status' do
+        expect(JSON.parse(response.body)['published']).to eq(false)
       end
   
       it 'is accociated with the user' do
@@ -132,11 +167,11 @@ RSpec.describe "Forms", type: :request do
   describe "PATCH /update" do
     let!(:my_user) { FactoryBot.create(:user) }
     let!(:my_form) { FactoryBot.create(:form, user: my_user) }
-    let!(:new_form) { FactoryBot.build(:form, user: my_user, components: VALID_COMPONENTS_ALTERNATE) }
+    let!(:new_form) { FactoryBot.build(:form, user: my_user, components: VALID_COMPONENTS_ALTERNATE, published: true) }
 
     context "with valid parameters" do
       before do
-        patch "/api/v1/forms/#{my_form.id}", params: { form: { name: new_form.name, title: new_form.title, description: new_form.description, components: new_form.components } }, headers: { :Authorization => "bearer #{my_user.token}" }, as: :json
+        patch "/api/v1/forms/#{my_form.id}", params: { form: { name: new_form.name, title: new_form.title, description: new_form.description, components: new_form.components, published: new_form.published } }, headers: { :Authorization => "bearer #{my_user.token}" }, as: :json
       end
 
       it 'returns the name' do
@@ -153,6 +188,10 @@ RSpec.describe "Forms", type: :request do
 
       it 'returns the components' do
         expect(JSON.parse(response.body)['components']).to eq(new_form.components)
+      end
+
+      it 'returns the published status' do
+        expect(JSON.parse(response.body)['published']).to eq(new_form.published)
       end
 
       it 'returns http ok status' do

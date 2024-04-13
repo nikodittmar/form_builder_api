@@ -3,11 +3,11 @@ class User < ApplicationRecord
     has_many :forms, dependent: :destroy
 
     validates :email, presence: true
-    validates :email, uniqueness: true
+    validates :email, uniqueness: { case_sensitive: false }
     validates :email, email: true
     
     validates :username, presence: true
-    validates :username, uniqueness: true
+    validates :username, uniqueness: { case_sensitive: false }
     validates :username, length: { in: 1..30 }
     validates :username, format: { without: /\s/, message: "can not have spaces"}
     

@@ -60,6 +60,14 @@ RSpec.describe User, type: :model do
     user = FactoryBot.create(:user)
     expect(FactoryBot.build(:user, email: user.email)).to_not be_valid
   end
+  it "username uniquness constraint is case insensitive" do
+    user = FactoryBot.create(:user, username: 'username')
+    expect(FactoryBot.build(:user, username: 'Username')).to_not be_valid
+  end
+  it "email uniqueness constraint is case insensitive" do
+    user = FactoryBot.create(:user, email: 'example@domain.com')
+    expect(FactoryBot.build(:user, email: 'Example@domain.com')).to_not be_valid
+  end
   it "is not valid with a not valid email" do
     expect(FactoryBot.build(:user, email: "not an email")).to_not be_valid
   end

@@ -1,14 +1,19 @@
 class Api::V1::FormsController < ApplicationController
-    before_action :authenticate_request
+    before_action :authenticate_request, except: :show
 
     def index
         @forms = @user.forms
-        render json: @forms
+        render json: @forms.to_json(:except => [:components])
     end
 
     def show
         @form = Form.find(params[:id])
-        render json: @form
+        if @form.published
+            render json: @form and return
+        end 
+        if authenticate_request
+            render json: @form
+        end
     end
 
     def create
@@ -43,7 +48,8 @@ class Api::V1::FormsController < ApplicationController
         params.require(:form).permit(
             :name, 
             :title, 
-            :description, 
+            :description,
+            :published,
             components: [ 
                 :id, 
                 :name, 

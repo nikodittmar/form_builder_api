@@ -13,5 +13,6 @@ FactoryBot.define do
         title { Faker::Lorem.sentence }
         description { Faker::Lorem.paragraph }
         components { VALID_COMPONENTS }
+        published { false }
     end
 end
