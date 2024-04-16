@@ -40,66 +40,173 @@ RSpec.describe "Forms", type: :request do
     let!(:my_user) { FactoryBot.create(:user) }
     let!(:my_form) { FactoryBot.create(:form, user: my_user) }
     let!(:my_published_form) { FactoryBot.create(:form, user: my_user, published: true) }
+    
 
     context "with authorization" do
-      before do
-        get "/api/v1/forms/#{my_form.id}", headers: { :Authorization => "bearer #{my_user.token}" }
-      end
-  
-      it 'returns the name' do
-        expect(JSON.parse(response.body)['name']).to eq(my_form.name)
+      context "as owner" do
+        context "published" do
+          before do
+            get "/api/v1/forms/#{my_published_form.id}", headers: { :Authorization => "bearer #{my_user.token}" }
+          end
+
+          it 'returns the name' do
+            expect(JSON.parse(response.body)['name']).to eq(my_published_form.name)
+          end
+    
+          it 'returns the title' do
+            expect(JSON.parse(response.body)['title']).to eq(my_published_form.title)
+          end
+    
+          it 'returns the description' do
+            expect(JSON.parse(response.body)['description']).to eq(my_published_form.description)
+          end
+    
+          it 'returns the components' do
+            expect(JSON.parse(response.body)['components']).to eq(my_published_form.components)
+          end
+
+          it 'returns true for owner' do
+            expect(JSON.parse(response.body)['owner']).to be true
+          end
+
+          it 'returns published' do
+            expect(JSON.parse(response.body)['published']).to be true
+          end
+      
+          it 'returns http ok status' do
+            expect(response).to have_http_status(:ok)
+          end
+        end
+
+        context "not published" do
+          before do
+            get "/api/v1/forms/#{my_form.id}", headers: { :Authorization => "bearer #{my_user.token}" }
+          end
+
+          it 'returns the name' do
+            expect(JSON.parse(response.body)['name']).to eq(my_form.name)
+          end
+    
+          it 'returns the title' do
+            expect(JSON.parse(response.body)['title']).to eq(my_form.title)
+          end
+    
+          it 'returns the description' do
+            expect(JSON.parse(response.body)['description']).to eq(my_form.description)
+          end
+    
+          it 'returns the components' do
+            expect(JSON.parse(response.body)['components']).to eq(my_form.components)
+          end
+
+          it 'returns true for owner' do
+            expect(JSON.parse(response.body)['owner']).to be true
+          end
+
+          it 'returns published' do
+            expect(JSON.parse(response.body)['published']).to be false
+          end
+      
+          it 'returns http ok status' do
+            expect(response).to have_http_status(:ok)
+          end
+        end
       end
 
-      it 'returns the title' do
-        expect(JSON.parse(response.body)['title']).to eq(my_form.title)
-      end
+      context "not as owner" do
+        let!(:other_user) { FactoryBot.create(:user) }
+        let!(:other_form) { FactoryBot.create(:form, user: other_user) }
+        let!(:other_published_form ) { FactoryBot.create(:form, user: other_user, published: true )}
 
-      it 'returns the description' do
-        expect(JSON.parse(response.body)['description']).to eq(my_form.description)
-      end
+        context "published" do
+          before do
+            get "/api/v1/forms/#{other_published_form.id}", headers: { :Authorization => "bearer #{my_user.token}" }
+          end
 
-      it 'returns the components' do
-        expect(JSON.parse(response.body)['components']).to eq(my_form.components)
-      end
-  
-      it 'returns http ok status' do
-        expect(response).to have_http_status(:ok)
+          it 'returns the name' do
+            expect(JSON.parse(response.body)['name']).to eq(other_published_form.name)
+          end
+    
+          it 'returns the title' do
+            expect(JSON.parse(response.body)['title']).to eq(other_published_form.title)
+          end
+    
+          it 'returns the description' do
+            expect(JSON.parse(response.body)['description']).to eq(other_published_form.description)
+          end
+    
+          it 'returns the components' do
+            expect(JSON.parse(response.body)['components']).to eq(other_published_form.components)
+          end
+
+          it 'returns false for owner' do
+            expect(JSON.parse(response.body)['owner']).to be false
+          end
+
+          it 'returns published' do
+            expect(JSON.parse(response.body)['published']).to be true
+          end
+      
+          it 'returns http ok status' do
+            expect(response).to have_http_status(:ok)
+          end
+        end
+
+        context "not published" do
+          before do
+            get "/api/v1/forms/#{other_form.id}", headers: { :Authorization => "bearer #{my_user.token}" }
+          end
+
+          it 'returns http unauthorized status' do
+            expect(response).to have_http_status(:unauthorized)
+          end
+        end
       end
     end
 
-    context "without authorization as published" do
-      before do
-        get "/api/v1/forms/#{my_published_form.id}"
+    context "without authorization" do
+      context "published" do
+        before do
+          get "/api/v1/forms/#{my_published_form.id}"
+        end
+
+        it 'returns the name' do
+          expect(JSON.parse(response.body)['name']).to eq(my_published_form.name)
+        end
+  
+        it 'returns the title' do
+          expect(JSON.parse(response.body)['title']).to eq(my_published_form.title)
+        end
+  
+        it 'returns the description' do
+          expect(JSON.parse(response.body)['description']).to eq(my_published_form.description)
+        end
+  
+        it 'returns the components' do
+          expect(JSON.parse(response.body)['components']).to eq(my_published_form.components)
+        end
+
+        it 'returns false for owner' do
+          expect(JSON.parse(response.body)['owner']).to be false
+        end
+
+        it 'returns published' do
+          expect(JSON.parse(response.body)['published']).to be true
+        end
+    
+        it 'returns http ok status' do
+          expect(response).to have_http_status(:ok)
+        end
       end
 
-      it 'returns the name' do
-        expect(JSON.parse(response.body)['name']).to eq(my_published_form.name)
-      end
+      context "not published" do
+        before do
+          get "/api/v1/forms/#{my_form.id}"
+        end
 
-      it 'returns the title' do
-        expect(JSON.parse(response.body)['title']).to eq(my_published_form.title)
-      end
-
-      it 'returns the description' do
-        expect(JSON.parse(response.body)['description']).to eq(my_published_form.description)
-      end
-
-      it 'returns the components' do
-        expect(JSON.parse(response.body)['components']).to eq(my_published_form.components)
-      end
-
-      it 'returns http ok status' do
-        expect(response).to have_http_status(:ok)
-      end
-    end
-
-    context "without authorization as unpublished" do
-      before do
-        get "/api/v1/forms/#{my_form.id}"
-      end
-
-      it 'returns http unauthorized status' do
-        expect(response).to have_http_status(:unauthorized)
+        it 'returns http unauthorized status' do
+          expect(response).to have_http_status(:unauthorized)
+        end
       end
     end
   end

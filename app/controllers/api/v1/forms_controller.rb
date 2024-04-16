@@ -8,11 +8,14 @@ class Api::V1::FormsController < ApplicationController
 
     def show
         @form = Form.find(params[:id])
-        if @form.published
-            render json: @form and return
-        end 
-        if authenticate_request
-            render json: @form
+        @user = find_user
+        
+        if !@user.nil? && @user.id == @form.user_id
+            render json: @form.as_json.merge({ owner: true })
+        elsif @form.published
+            render json: @form.as_json.merge({ owner: false })
+        else
+            head :unauthorized
         end
     end
 
